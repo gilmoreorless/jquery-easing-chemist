@@ -78,17 +78,40 @@ $(function () {
 		this.paper = Raphael(this.id, gWidth, gHeight);
 		this.paper.rect(0, 0, gWidth, gHeight).attr({fill: '#000', 'stoke-width': 0});
 		this.paper.drawGrid(0.5, gPadding + .5, gWidth, gWidth, 20, 20, '#555');
+		this.hue = ~~(Math.random() * 360);
+	}
+	
+	gproto.nextColour = function () {
+		var colour = 'hsl(' + [this.hue, 50, 50] + ')';
+		this.hue = (this.hue + 60) % 360;
+		return colour;
 	}
 	
 	gproto.render = function () {
 		for (var i = 0, ii = this.easings.length; i < ii; i++) {
-			this.drawEasing(this.easings[i]);
+			this.drawEasingComparison(this.easings[i]);
 		}
 	}
 	
-	gproto.drawEasing = function (easing) {
+	gproto.drawEasingComparison = function (easing) {
 		var easingName = this.prefix + easing
-		  , easingFunc = $.easing[easingName]
+		  , colour = this.nextColour()
+		  , origAttrs = {
+			    stroke: colour
+		      , 'stroke-width': 7
+			  , opacity: .4
+			}
+		  , newAttrs = {
+			    stroke: colour
+			  , 'stoke-width': 1
+			  , opacity: 1
+		    }
+		this.drawEasingLine(easingName + 'Orig', origAttrs);
+		this.drawEasingLine(easingName, newAttrs);
+	}
+	
+	gproto.drawEasingLine = function (easingName, attrs) {
+		var easingFunc = $.easing[easingName]
 		  , path = ['M', 0, gBaseline]
 		  , steps = resolution
 		  , s = 1
@@ -101,21 +124,10 @@ $(function () {
 			path = path.concat('L', Graph.xyEasingToGrid(s / steps, e));
 		}
 		path = path.concat('L', Graph.xyEasingToGrid(1, 1));
-		this.paper.path(path).attr({
-			stroke: '#FFF'
-		})
-/*
-			path = ['M', 0, maxY];
-			for (progress = 1; progress < steps; progress++) {
-				e = steps * $.easing[oldEasing](progress / steps, progress, 0, 1, steps);
-				path = path.concat(['L', (progress / steps * maxX), maxY - (e / steps * minY)]);
-			}
-			path = paper.path(path).attr({
-				stroke: '#FFFFFF'
-			});
-			set.push(path);
- */
+		this.paper.path(path).attr(attrs);
 	}
+	
+	
 	
 	
 	/*** SETUP ***/

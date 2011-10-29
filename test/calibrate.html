@@ -14,6 +14,12 @@
 
 		<script src="jquery-1.6.2.js"></script>
 		<script src="../jquery.easing-orig.js"></script>
+		<script>
+			$.each($.easing, function (name, func) {
+				$.easing[name + 'Orig'] = func;
+			});
+		</script>
+		<script src="../jquery.easing-simplified.js"></script>
 		<script src="raphael-min.js"></script>
 		<script src="calibrate.js"></script>
 	</body>
