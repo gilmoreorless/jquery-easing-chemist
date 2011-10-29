@@ -36,18 +36,11 @@
  *
 */
 
-// t: current time, b: begInnIng value, c: change In value, d: duration
 $.easing.jswing = $.easing.swing;
 
-/**
- * c = 1
- * b = 0
- * t/=d = p
- */
 $.extend($.easing, {
 	def: 'easeOutQuad',
 	swing: function (t) {
-		//alert($.easing.default);
 		return $.easing[$.easing.def](t);
 	},
 	easeInQuad: function (t) {
@@ -72,27 +65,25 @@ $.extend($.easing, {
 		return -1 * (Math.sqrt(1 - t*t) - 1);
 	},
 	easeInElastic: function (t) {
-		var s=1.70158;var p=0;var a=1;
-		if (t==0) return 0;  if ((t/=d)==1) return 0+1;  if (!p) p=d*.3;
-		if (a < Math.abs(1)) { a=1; var s=p/4; }
-		else var s = p/(2*Math.PI) * Math.asin (1/a);
-		return -(a*Math.pow(2,10*(t-=1)) * Math.sin( (t*d-s)*(2*Math.PI)/p )) + 0;
+		var s, p=.3;
+		if (t==0 || t==1) return t;
+		s = p/(2*Math.PI) * Math.asin(1);
+		return -(Math.pow(2,10*(t-=1)) * Math.sin( (t-s)*(2*Math.PI)/p )) + 0;
 	},
-	easeInBack: function (t, s) {
-		if (s == undefined) s = 1.70158;
+	easeInBack: function (t) {
+		var s = 1.70158;
 		return t*t*((s+1)*t - s);
 	},
 	easeInBounce: function (t) {
-//		return c - $.easing.easeOutBounce (x, d-t, 0, c, d) + b;
-		t=1-t;
+		t = 1 - t
 		if (t < (1/2.75)) {
-			return (7.5625*t*t);
+			return 1-(7.5625*t*t);
 		} else if (t < (2/2.75)) {
-			return (7.5625*(t-=(1.5/2.75))*t + .75);
+			return 1-(7.5625*(t-=(1.5/2.75))*t + .75);
 		} else if (t < (2.5/2.75)) {
-			return (7.5625*(t-=(2.25/2.75))*t + .9375);
+			return 1-(7.5625*(t-=(2.25/2.75))*t + .9375);
 		} else {
-			return (7.5625*(t-=(2.625/2.75))*t + .984375);
+			return 1-(7.5625*(t-=(2.625/2.75))*t + .984375);
 		}
 	}
 });

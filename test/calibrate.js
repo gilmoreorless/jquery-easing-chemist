@@ -88,7 +88,8 @@ $(function () {
 	}
 	
 	gproto.render = function () {
-		for (var i = 0, ii = this.easings.length; i < ii; i++) {
+		var i = this.easings.length;
+		while (i--) {
 			this.drawEasingComparison(this.easings[i]);
 		}
 	}
@@ -150,13 +151,14 @@ $(function () {
 	for (var i = 0, ii = data.length; i < ii; i++) {
 		var type = data[i]
 		  , name
-		for (var j = 0; j < 3; j++) {
+		  , j = 0
+//		for (var j = 0; j < 3; j++) {
 			name = type.id + '-' + nameArr[j];
 			$('<div/>', {
 				id: name,
 				'class': 'graph-holder'
 			}).appendTo($container);
 			Graph(name, type.easings, nameArr[j]);
-		}
+//		}
 	}
 });
