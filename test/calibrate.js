@@ -135,10 +135,10 @@ $(function () {
 	
 	var data = [{
 		    id: 'basic'
-		  , easings: ['Sine', 'Quad', 'Cubic', 'Quart', 'Quint', 'Expo', 'Circle']
+		  , easings: ['Sine', 'Quad', 'Cubic', 'Quart', 'Quint', 'Expo']
 		}, {
-		    id: 'back'
-		  , easings: ['Back']
+		    id: 'backCirc'
+		  , easings: ['Back', 'Circ']
 		}, {
 		    id: 'bounce'
 		  , easings: ['Bounce']
@@ -151,14 +151,13 @@ $(function () {
 	for (var i = 0, ii = data.length; i < ii; i++) {
 		var type = data[i]
 		  , name
-		  , j = 0
-//		for (var j = 0; j < 3; j++) {
+		for (var j = 0; j < 3; j++) {
 			name = type.id + '-' + nameArr[j];
 			$('<div/>', {
 				id: name,
 				'class': 'graph-holder'
 			}).appendTo($container);
 			Graph(name, type.easings, nameArr[j]);
-//		}
+		}
 	}
 });

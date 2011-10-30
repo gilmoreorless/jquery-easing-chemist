@@ -36,6 +36,14 @@
  *
 */
 
+/**
+ * This is a file used for testing the simplification of formulae used in the original
+ * jQuery Easing plugin, which has a lot of redundant variables carried over from Penner's
+ * original equations and don't make sense in jQuery
+ * 
+ * I've only simplified the easeIn functions as a lead-in to the proper molecule system.
+ */
+
 $.easing.jswing = $.easing.swing;
 
 $.extend($.easing, {

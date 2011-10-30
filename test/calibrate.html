@@ -17,7 +17,16 @@
 		<script>
 			$.each($.easing, function (name, func) {
 				$.easing[name + 'Orig'] = func;
+				delete $.easing[name];
 			});
+			// Account for new names during testing
+			$.easing.easeInBounceOrig = function (x, t, b, c, d) {
+				return c - $.easing.easeOutBounceOrig (x, d-t, 0, c, d) + b;
+			}
+			$.easing.easeInOutBounceOrig = function (x, t, b, c, d) {
+				if (t < d/2) return $.easing.easeInBounceOrig (x, t*2, 0, c, d) * .5 + b;
+				return $.easing.easeOutBounceOrig (x, t*2-d, 0, c, d) * .5 + c*.5 + b;
+			}
 		</script>
 		<script src="../jquery.easing-simplified.js"></script>
 		<script src="raphael-min.js"></script>
