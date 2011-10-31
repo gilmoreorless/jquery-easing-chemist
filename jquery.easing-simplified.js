@@ -64,19 +64,19 @@ $.extend($.easing, {
 		return t*t*t*t*t;
 	},
 	easeInSine: function (t) {
-		return -1 * Math.cos(t * (Math.PI/2)) + 1;
+		return 1 - Math.cos(t * Math.PI / 2);
 	},
 	easeInExpo: function (t) {
 		return (t==0) ? 0 : Math.pow(2, 10 * (t - 1));
 	},
 	easeInCirc: function (t) {
-		return -1 * (Math.sqrt(1 - t*t) - 1);
+		return 1 - Math.sqrt(1 - t * t);
 	},
 	easeInElastic: function (t) {
 		var s, p=.3;
 		if (t==0 || t==1) return t;
 		s = p/(2*Math.PI) * Math.asin(1);
-		return -(Math.pow(2,10*(t-=1)) * Math.sin( (t-s)*(2*Math.PI)/p )) + 0;
+		return -(Math.pow(2,10*(t-=1)) * Math.sin( (t-s)*(2*Math.PI)/p ));
 	},
 	easeInBack: function (t) {
 		var s = 1.70158;
