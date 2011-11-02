@@ -20,13 +20,12 @@ Raphael.fn.drawGrid = Raphael.fn.drawGrid || function (x, y, w, h, wv, hv, color
       , gBaseline  = gWidth + gPadding
       , gHeight    = gWidth + gPadding * 2
     
-    window.Graph = function Graph(id, easings, prefix) {
+    window.Graph = function Graph(id, easings) {
         if (!(this instanceof Graph)) {
-            return new Graph(id, easings, prefix);
+            return new Graph(id, easings);
         }
         this.id = id;
         this.easings = Raphael.is(easings, 'string') ? [easings] : easings;
-        this.prefix = '' + prefix;
         this.init();
         this.render();
     }
@@ -64,30 +63,33 @@ Raphael.fn.drawGrid = Raphael.fn.drawGrid || function (x, y, w, h, wv, hv, color
     gproto.render = function () {
         var i = this.easings.length;
         while (i--) {
-            this.drawEasingComparison(this.easings[i]);
+            this.drawEasing(this.easings[i]);
         }
     }
     
-    gproto.drawEasingComparison = function (easing) {
-        var easingName = this.prefix + easing
+    gproto.drawEasing = function (easingFunc) {
+        if (!Raphael.is(easingFunc, 'array')) {
+            easingFunc = [easingFunc];
+        }
+        var easingBg = easingFunc[0]
+          , easingFg = easingFunc[1] || easingFunc[0]
           , colour = this.nextColour()
-          , origAttrs = {
+          , bgAttrs = {
                 stroke: colour
               , 'stroke-width': 7
               , opacity: .4
             }
-          , newAttrs = {
+          , fgAttrs = {
                 stroke: colour
               , 'stoke-width': 1
               , opacity: 1
             }
-        this.drawEasingLine(easingName + 'Orig', origAttrs);
-        this.drawEasingLine(easingName, newAttrs);
+        this.drawEasingLine(easingBg, bgAttrs);
+        this.drawEasingLine(easingFg, fgAttrs);
     }
     
-    gproto.drawEasingLine = function (easingName, attrs) {
-        var easingFunc = $.easing[easingName]
-          , path = ['M', 0, gBaseline]
+    gproto.drawEasingLine = function (easingFunc, attrs) {
+        var path = ['M', 0, gBaseline]
           , steps = resolution
           , s = 1
           , e
@@ -95,7 +97,7 @@ Raphael.fn.drawGrid = Raphael.fn.drawGrid || function (x, y, w, h, wv, hv, color
             return;
         }
         for (; s < steps; s++) {
-            e = easingFunc(s / steps, s, 0, 1, steps);
+            e = easingFunc(s / steps, s, 0, 1, steps); // Extra params to make jQuery happy
             path = path.concat('L', Graph.xyEasingToGrid(s / steps, e));
         }
         path = path.concat('L', Graph.xyEasingToGrid(1, 1));
