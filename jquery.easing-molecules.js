@@ -2,11 +2,9 @@
  * TESTING ONLY - USE OF UNSTABLE CODE IN PRODUCTION CAN RESULT IN INJURY OR DEATH
  */
 
-;(function ($) {
+;(function ($, undefined) {
 	var $e = $.easing,
 		ease = 'ease';
-	
-	// TODO: Wrap easing functions in a memoizer
 	
 	//// Setup
 	
