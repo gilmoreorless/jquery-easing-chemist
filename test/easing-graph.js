@@ -25,7 +25,7 @@ Raphael.fn.drawGrid = Raphael.fn.drawGrid || function (x, y, w, h, wv, hv, color
             return new Graph(id, easings);
         }
         this.id = id;
-        this.easings = Raphael.is(easings, 'string') ? [easings] : easings;
+        this.easings = Raphael.is(easings, 'array') ? easings : [easings];
         this.init();
         this.render();
     }
