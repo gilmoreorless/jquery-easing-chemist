@@ -1,26 +1,3 @@
-/*
-		// Draw graph
-		var steps = 1000,
-			maxX = 600,
-			maxY = 400,
-			minY = maxY - (paper.height - maxY),
-			set = paper.set(),
-			path = [],
-			progress, e;
-
-		// Original easing graph (if applicable)
-		if (easing != oldEasing) {
-			path = ['M', 0, maxY];
-			for (progress = 1; progress < steps; progress++) {
-				e = steps * $.easing[oldEasing](progress / steps, progress, 0, 1, steps);
-				path = path.concat(['L', (progress / steps * maxX), maxY - (e / steps * minY)]);
-			}
-			path = paper.path(path).attr({
-				stroke: '#FFFFFF'
-			});
-			set.push(path);
-		}
- */
 Raphael.fn.drawGrid = function (x, y, w, h, wv, hv, color) {
     color = color || "#000";
     var path = ["M", x, y, "L", x + w, y, x + w, y + h, x, y + h, x, y],
