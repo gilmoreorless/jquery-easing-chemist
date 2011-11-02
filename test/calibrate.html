@@ -1,36 +1,36 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>JS Easing Molecules &ndash; Calibration Tests</title>
-		<meta charset="UTF-8">
-		<style>
-			body {width: 1250px; margin: 0 auto;}
-			.graph-holder {float: left; margin: 25px 25px 0 0; width: 400px;}
-			.graph-holder:nth-child(3n) {margin-right: 0}
-		</style>
-	</head>
-	<body>
-		<div id="container"></div>
+    <head>
+        <title>JS Easing Molecules &ndash; Calibration Tests</title>
+        <meta charset="UTF-8">
+        <style>
+            body {width: 1250px; margin: 0 auto;}
+            .graph-holder {float: left; margin: 25px 25px 0 0; width: 400px;}
+            .graph-holder:nth-child(3n) {margin-right: 0}
+        </style>
+    </head>
+    <body>
+        <div id="container"></div>
 
-		<script src="jquery-1.6.2.js"></script>
-		<script src="../jquery.easing-orig.js"></script>
-		<script>
-			$.each($.easing, function (name, func) {
-				$.easing[name + 'Orig'] = func;
-				delete $.easing[name];
-			});
-			// Account for new names during testing
-			$.easing.easeInBounceOrig = function (x, t, b, c, d) {
-				return c - $.easing.easeOutBounceOrig (x, d-t, 0, c, d) + b;
-			}
-			$.easing.easeInOutBounceOrig = function (x, t, b, c, d) {
-				if (t < d/2) return $.easing.easeInBounceOrig (x, t*2, 0, c, d) * .5 + b;
-				return $.easing.easeOutBounceOrig (x, t*2-d, 0, c, d) * .5 + c*.5 + b;
-			}
-		</script>
-<!--		<script src="../jquery.easing-simplified.js"></script>-->
-		<script src="../jquery.easing-molecules.js"></script>
-		<script src="raphael-min.js"></script>
-		<script src="calibrate.js"></script>
-	</body>
+        <script src="jquery-1.6.2.js"></script>
+        <script src="../jquery.easing-orig.js"></script>
+        <script>
+            $.each($.easing, function (name, func) {
+                $.easing[name + 'Orig'] = func;
+                delete $.easing[name];
+            });
+            // Account for new names during testing
+            $.easing.easeInBounceOrig = function (x, t, b, c, d) {
+                return c - $.easing.easeOutBounceOrig (x, d-t, 0, c, d) + b;
+            }
+            $.easing.easeInOutBounceOrig = function (x, t, b, c, d) {
+                if (t < d/2) return $.easing.easeInBounceOrig (x, t*2, 0, c, d) * .5 + b;
+                return $.easing.easeOutBounceOrig (x, t*2-d, 0, c, d) * .5 + c*.5 + b;
+            }
+        </script>
+<!--        <script src="../jquery.easing-simplified.js"></script>-->
+        <script src="../jquery.easing-molecules.js"></script>
+        <script src="raphael-min.js"></script>
+        <script src="calibrate.js"></script>
+    </body>
 </html>
