@@ -12,6 +12,30 @@ $.easing.tardis = function (t) {
                     f((t - 4 / s) * s) * 3 / s + 2 / s
 }
 
+var tempElastic = function (p) {
+    if (p === undefined) p = .3;
+    var elas = function (t) {
+		if (t == !!t) return t;
+		var pi2 = 2 * Math.PI,
+			s = p / pi2 * Math.asin(1);
+		return -(Math.pow(2, 10 * --t) * Math.sin((t - s) * pi2 / p));
+	}
+	return function (t) {
+		return 1 - elas(1 - t);
+	}
+}
+
+$.easing.slingshot = function (t) {
+	var f1 = $.easing.easeInExpo
+	  , f2 = tempElastic(.2)
+	  , split = .8
+	  , back = .3
+	  , s2 = 1 / (1 - split)
+	return t <= split ?
+		f1(1 - t * split) * back - back :
+		f2((t - split) * s2) * (1 + back) - back
+}
+
 function buildUpSteps(easing, steps) {
     if (!(steps % 2)) {
         steps++;
@@ -59,7 +83,7 @@ $(function () {
           , buildUpSteps($.easing.easeInOutCirc, 7)
           , [buildUpSteps($.easing.easeInOutSine, 8), buildUpLinear($.easing.easeInOutSine, 8)]
 		  , buildUpLinear($.easing.easeOutElastic, 7)
-		  , buildUpLinear($.easing.easeOutBounce, 7)
+		  , $.easing.slingshot
         ]
       , tempEasing
     
@@ -77,7 +101,8 @@ $(function () {
     $.easing.tardis2 = buildUpLinear($.easing.easeInOutSine, 8)
     $.easing.tardis3 = buildUpLinear($.easing.easeOutElastic, 7)
     $(document).click(function () {
-        $tardis.hide().fadeIn(10000, 'tardis2')
+//        $tardis.hide().fadeIn(10000, 'tardis2')
 //        $tardis.css('marginLeft', 0).animate({marginLeft: 900}, 5000, 'tardis3')
+        $tardis.css('marginLeft', 200).animate({marginLeft: 900}, 3000, 'slingshot')
     })
 });
