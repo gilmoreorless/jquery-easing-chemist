@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>JS Easing Molecules &ndash; Custom Easing Types</title>
+        <meta charset="UTF-8">
+        <style>
+            body {
+				background: -webkit-repeating-linear-gradient(-45deg, #333, #666 50px, #CCC 50px, #FFF 100px);
+				margin: 0 auto;
+				width: 1250px;
+			}
+            .graph-holder {background: #000; color: #FFF; font-family: Arial; float: left; margin: 25px 25px 0 0; text-align: center; width: 400px;}
+            .graph-holder:nth-child(3n) {margin-right: 0}
+            .graph-holder span {display: block;}
+            .title {font-weight: bold; padding: 5px 0;}
+            .desc {font-family: Consolas;}
+        </style>
+    </head>
+    <body>
+        <div id="container"></div>
+
+        <script src="jquery-1.6.2.js"></script>
+        <script src="../jquery.easing-molecules.js"></script>
+        <script src="raphael-min.js"></script>
+        <script src="easing-graph.js"></script>
+        <script src="manipulations.js"></script>
+    </body>
+</html>

@@ -86,7 +86,7 @@
             return -(Math.pow(2, 10 * --t) * Math.sin((t - s) * pi2 / p));
         }
     }
-    // easeInOutElastic has a different modifier so it's not so exaggerated
+    // easeInOutElastic has a different modifier so it's not as exaggerated
     build('Elastic', elastic, .45);
     
 })(jQuery);
