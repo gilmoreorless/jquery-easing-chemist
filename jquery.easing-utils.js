@@ -138,6 +138,27 @@ $.easing.thingy = buildEasing({
 });
 */
 
+    // Copied from Raphaël
+    var is = (function () {
+        var lowerCase = String.prototype.toLowerCase,
+            objectToString = Object.prototype.toString,
+            isnan = {"NaN": 1, "Infinity": 1, "-Infinity": 1};
+        return function is(o, type) {
+            type = lowerCase.call(type);
+            if (type == "finite") {
+                return !isnan.hasOwnProperty(+o);
+            }
+            if (type == "array") {
+                return o instanceof Array;
+            }
+            return  (type == "null" && o === null) ||
+                    (type == typeof o && o !== null) ||
+                    (type == "object" && o === Object(o)) ||
+                    (type == "array" && Array.isArray && Array.isArray(o)) ||
+                    objectToString.call(o).slice(8, -1).toLowerCase() == type;
+        };
+    })();
+
     function scaledEasing(easing) {
         
     }
@@ -152,8 +173,7 @@ $.easing.thingy = buildEasing({
             newPerc = percentToNum(perc)
             stops.push(newPerc);
             frame = keyframes[perc];
-            // TODO: is() - this fails on new String()
-            if (typeof frame == 'string') {
+            if (is(frame, 'string')) {
                 frame = {easing: frame};
             }
             // TODO: Auto calculate "smart" objects (as detailed above)
@@ -210,8 +230,7 @@ $.easing.thingy = buildEasing({
     
     var rPercent = /^(\S+)%$/
     function percentToNum(num, unbounded) {
-        // TODO: is()
-        if (Object.prototype.toString.call(num) == '[object String]') {
+        if (is(num, 'string')) {
             var match = num.match(rPercent);
             if (match) {
                 num = match[1] / 100;
