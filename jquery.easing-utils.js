@@ -158,10 +158,6 @@ $.easing.thingy = buildEasing({
                     objectToString.call(o).slice(8, -1).toLowerCase() == type;
         };
     })();
-
-    function scaledEasing(easing) {
-        
-    }
     
     function buildEasing(keyframes) {
         var stops = [],
@@ -191,7 +187,7 @@ $.easing.thingy = buildEasing({
         }
         // Sort percentage stops in descending order
         stops.sort(function (a, b) {
-            return a < b;
+            return a == b ? 0 : a < b ? 1 : -1;
         });
         
         var prevStop = 0;
