@@ -16,7 +16,7 @@ Raphael.fn.drawGrid = Raphael.fn.drawGrid || function (x, y, w, h, wv, hv, color
     
     var gWidth     = 400
       , gPadding   = 150
-      , resolution = 300
+      , resolution = 400
       , gBaseline  = gWidth + gPadding
       , gHeight    = gWidth + gPadding * 2
     
@@ -98,9 +98,17 @@ Raphael.fn.drawGrid = Raphael.fn.drawGrid || function (x, y, w, h, wv, hv, color
         }
         for (; s < steps; s++) {
             e = easingFunc(s / steps, s, 0, 1, steps); // Extra params to make jQuery happy
-            path = path.concat('L', Graph.xyEasingToGrid(s / steps, e));
+            path = drawPoint(path, Graph.xyEasingToGrid(s / steps, e));
+//            path = path.concat('L', Graph.xyEasingToGrid(s / steps, e));
         }
-        path = path.concat('L', Graph.xyEasingToGrid(1, 1));
+        path = drawPoint(path, Graph.xyEasingToGrid(1, 1));
+//        path = path.concat('L', Graph.xyEasingToGrid(1, 1));
         this.paper.path(path).attr(attrs);
+    }
+    
+    function drawPoint(path, point) {
+//        path = path.concat('L', point);
+        path = path.concat('M', point, 'l', [1, 0], [0, 1], [-1, 0], [0, -1], 'z')
+        return path;
     }
 })(this, jQuery);

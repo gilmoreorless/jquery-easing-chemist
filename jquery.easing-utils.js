@@ -112,11 +112,11 @@ $.easing.sliding = buildEasing(nameOrFunc, repeatCount, scale); // scale from 0 
 // Build easing using keyframes
 $.easing.thingy = buildEasing({
     // string or function, assume no transform, scale or adjustment
-    // will go until next defined keyframe
+    // will go from 0 to keyframe
+    0: easingNameOrFunc,
     25: easingNameOrFunc,
 
     // standard options object
-    // will go until next defined keyframe
     '50%': {
         easing: nameOrFunc,
         reverse: true,
@@ -128,13 +128,14 @@ $.easing.thingy = buildEasing({
     // "smart" object, auto-calculates reverse, scale and adjust based on from/to %
     // eg. {from: -.3, to: '60%'} works out as {scale: .9, adjust: -.3}
     // eg. {from: .6, to: '-30%'} works out as {scale: .9, adjust: -.3, reverse: true}
-    // will go until next defined keyframe or 100%
     75: {
         easing: nameOrFunc,
         reflect: true,
         from: positionPercentage,
         to: positionPercentage
     }
+    
+    // if 100% isn't defined, linear easing is done from the previous keyframe
 });
 */
 
@@ -189,14 +190,21 @@ $.easing.thingy = buildEasing({
         stops.sort(function (a, b) {
             return a == b ? 0 : a < b ? 1 : -1;
         });
+        // Add in a no-op stop to speed up calculations in the customEasing function
+        if (stops[stops.length - 1] != 0) {
+            stops.push(0);
+        }
         
-        var prevStop = 0;
+//        var prevStop = 0;
         return function customEasing(t) {
             var curStop,
-                i = stops.length;
-            while ((curStop = stops[--i]) < t) {
-                prevStop = stops.pop();
-            }
+                prevStop,
+                i = stops.length - 1;
+//            while ((curStop = stops[--i]) < t) {
+//                prevStop = stops.pop();
+//            }
+            while ((curStop = stops[--i]) < t);
+            prevStop = stops[i + 1];
             var frame = frames[curStop],
                 step = curStop - prevStop,
                 newT = (1 / step) * (t - prevStop);
