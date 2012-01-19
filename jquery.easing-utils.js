@@ -91,6 +91,11 @@
     // easeInOutElastic has a different modifier so it's not as exaggerated
     utils.triple('Elastic', tmpl.elastic, .45);
     
+    // Convert jQuery's inbuilt easing functions to work with the new system
+    $e.linear = function (t) {
+        return t;
+    }
+    $e.swing = $e.easeInOutSine;
     
     //// Custom builds
     
@@ -165,22 +170,28 @@ $.easing.thingy = buildEasing({
             frames = {},
             frame
         // Normalise the frames
-        var perc, newPerc;
+        var perc, newPerc, newFrame;
         for (perc in keyframes) if (keyframes.hasOwnProperty(perc)) {
-            newPerc = percentToNum(perc)
+            newPerc = percentToNum(perc, false, true);
             stops.push(newPerc);
             frame = keyframes[perc];
             if (is(frame, 'string')) {
                 frame = {easing: frame};
             }
             // TODO: Auto calculate "smart" objects (as detailed above)
-            frames[newPerc] = $.extend({}, frame, {
+            newFrame = frames[newPerc] = $.extend({}, frame, {
                 easing: getEasing(frame.easing)
             });
-            // TODO: Normalise scale, adjust, etc
+            if (newFrame.reflect) {
+                newFrame.easing = utils.reflect(newFrame.easing);
+            }
+            newFrame.scale  = percentToNum(newFrame.scale || 1, true);
+            newFrame.adjust = percentToNum(newFrame.adjust || 0, true);
         }
         // Make sure there's a 100% keyframe
         if (!frames.hasOwnProperty(1)) {
+            // TODO: Need to get previous frame and work out finishing position,
+            //       then calculate linear from there
             frames[1] = {
                 easing: $e.linear
             };
@@ -212,11 +223,10 @@ $.easing.thingy = buildEasing({
              * Properties:
              * -(step)   f(t*sh)
              * -reverse  1-f(t)
-             * -reflect  utils.reflect(f)
+             * -reflect  utils.reflect(f) [handled by buildEasing()]
              * -scale    f(t)*sv
              * -adjust   f(t)+av
              */
-            // TODO: Work out reflect
             var e = frame.easing(newT);
             if (frame.reverse) {
                 e = 1 - e;
@@ -233,19 +243,22 @@ $.easing.thingy = buildEasing({
     }
     
     var rPercent = /^(\S+)%$/
-    function percentToNum(num, unbounded) {
+    function percentToNum(num, unbounded, normalise) {
         if (is(num, 'string')) {
             var match = num.match(rPercent);
             if (match) {
                 num = match[1] / 100;
             }
         }
+        if (normalise) {
+            num = +num > 1 ? num / 100 : num;
+        }
         return unbounded ? +num : Math.min(1, Math.max(0, +num));
     }
     
     utils.build = function (easing, repeat, scale) {
         // Keyframes, no further processing required
-        if (easing + '' != easing && typeof easing != 'function') {
+        if (is(easing, 'object')) {
             return buildEasing(easing);
         }
         if (arguments.length > 2) {
