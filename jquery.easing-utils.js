@@ -168,7 +168,12 @@ $.easing.thingy = buildEasing({
     function buildEasing(keyframes) {
         var stops = [],
             frames = {},
-            frame
+            defaultEasing,
+            frame,
+            prevFrame;
+        if (keyframes.easing) {
+            defaultEasing = getEasing(keyframes.easing);
+        }
         // Normalise the frames
         var perc, newPerc, newFrame;
         for (perc in keyframes) if (keyframes.hasOwnProperty(perc)) {
@@ -178,29 +183,48 @@ $.easing.thingy = buildEasing({
             if (is(frame, 'string')) {
                 frame = {easing: frame};
             }
-            // TODO: Auto calculate "smart" objects (as detailed above)
             newFrame = frames[newPerc] = $.extend({}, frame, {
-                easing: getEasing(frame.easing)
+                easing: frame.easing ? getEasing(frame.easing) : defaultEasing
             });
             if (newFrame.reflect) {
                 newFrame.easing = utils.reflect(newFrame.easing);
             }
-            newFrame.scale  = percentToNum(newFrame.scale || 1, true);
-            newFrame.adjust = percentToNum(newFrame.adjust || 0, true);
+            // Work out "smart" frames
+            if (newFrame.to !== undefined) {
+                // TODO: This needs to be moved to a loop after sorting the stops,
+                //       so that prevFrame can be used to get the last `to` value
+                var from = percentToNum(newFrame.from, true),
+                    to   = percentToNum(newFrame.to, true);
+                newFrame.scale = Math.max(from, to) - Math.min(from, to);
+                newFrame.adjust = Math.min(from, to);
+                newFrame.reverse = from > to;
+            } else {
+                newFrame.scale  = percentToNum(newFrame.scale || 1, true);
+                newFrame.adjust = percentToNum(newFrame.adjust || 0, true);
+            }
         }
-        // Make sure there's a 100% keyframe
-        if (!frames.hasOwnProperty(1)) {
-            // TODO: Need to get previous frame and work out finishing position,
-            //       then calculate linear from there
-            frames[1] = {
-                easing: $e.linear
-            };
-            stops.push(1);
+        // Optimise an empty state
+        if (!stops.length) {
+            return $e.linear;
         }
         // Sort percentage stops in descending order
         stops.sort(function (a, b) {
             return a == b ? 0 : a < b ? 1 : -1;
         });
+        // Make sure there's a 100% keyframe
+        if (stops[0] != 1) {
+            prevFrame = frames[stops[0]];
+            var prevFinish = prevFrame.reverse
+                    ? prevFrame.adjust
+                    : prevFrame.scale + prevFrame.adjust,
+                endScale = 1 - prevFinish;
+            frames[1] = {
+                easing:  $e.linear,
+                scale:   endScale,
+                adjust:  prevFinish
+            };
+            stops.unshift(1);
+        }
         // Add in a no-op stop to speed up calculations in the customEasing function
         if (stops[stops.length - 1] != 0) {
             stops.push(0);

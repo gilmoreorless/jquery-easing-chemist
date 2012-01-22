@@ -18,27 +18,79 @@ $(function () {
 //            
 //            // Re-usability of returned easing function (graph will call it twice)
 //          , build('easeOutCirc', 4)
+//            
+//            // Keyframe object
+//          , build({
+//                // Most basic keyframe
+//                .25: 'easeOutElastic'
+//                
+//                // A reflect+reverse, turn 50 into .5
+//              , 50: {
+//                    easing: 'easeInBack'
+//                  , reflect: true
+//                  , reverse: true
+//                }
+//                
+//                // Scale+adjust, turn '75%' into .75
+//              , '75%': {
+//                    easing: $e.easeOutBounce
+//                  , scale: 1.2
+//                  , adjust: -.1
+////                  , reverse: true // TEMP for testing 100% defaults
+//                }
+//                
+//                // No listing of 100%, should use linear
+//            })
+//            
+//            // Empty keyframes - should default to linear
+//          , build({})
             
-            // Keyframe object
+/*
+    // "smart" object, auto-calculates reverse, scale and adjust based on from/to %
+    // eg. {from: -.3, to: '60%'} works out as {scale: .9, adjust: -.3}
+    // eg. {from: .6, to: '-30%'} works out as {scale: .9, adjust: -.3, reverse: true}
+    75: {
+        easing: nameOrFunc,
+        reflect: true,
+        from: positionPercentage,
+        to: positionPercentage
+    }
+ */
+            // Single smart frame, normal
+           build({
+                100: {
+                    easing: 'easeOutQuint'
+                  , from: .125
+                  , to: '72.5%'
+                }
+            })
+            
+            // Single smart frame, reverse
           , build({
-                // Most basic keyframe
-                .25: 'easeOutElastic'
-                
-                // A reflect+reverse, turn 50 into .5
-              , 50: {
-                    easing: 'easeInBack'
-                  , reflect: true
-                  , reverse: true
+                100: {
+                    easing: 'easeOutQuint'
+                  , from: .725
+                  , to: '12.5%'
                 }
-                
-                // Scale+adjust, turn '75%' into .75
+            })
+            
+            // Multi-step smart frames, with default easing
+          , build({
+                easing: $e.easeInSine
+              , .33: {
+                    // No `from`, should default to 0
+                    to: '90%'
+                }
               , '75%': {
-                    easing: $e.easeOutBounce
-                  , scale: 1.2
-                  , adjust: -.1
+                    // No `from`, should default to `to` of previous frame
+                    to: .4
+                  , easing: 'linear'
                 }
-                
-                // No listing of 100%, should use linear
+              , 100: {
+                    from: .3
+                  , to: 1
+                  , reflect: true
+                }
             })
         ]
       , tempEasing
