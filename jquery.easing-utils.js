@@ -176,7 +176,7 @@ $.easing.thingy = buildEasing({
         // Get frame stop points and sort them, as we can't guarantee
         // the order of keys in a plain object
         var perc, newPerc;
-        for (perc in keyframes) if (keyframes.hasOwnProperty(perc)) {
+        for (perc in keyframes) if (keyframes.hasOwnProperty(perc) && perc != 'easing') {
             newPerc = percentToNum(perc, false, true);
             frames[newPerc] = keyframes[perc];
             stops.push(newPerc);
@@ -189,8 +189,16 @@ $.easing.thingy = buildEasing({
         stops.sort(function (a, b) {
             return a == b ? 0 : a < b ? 1 : -1;
         });
+        // Make sure there's a 100% keyframe
+        if (stops[0] != 1) {
+            stops.unshift(1);
+            frames[1] = {
+                easing: defaultEasing || 'linear',
+                to: 1
+            }
+        }
         // Normalise the frames
-        for (var i = 0, ii = stops.length; i < ii; i++) {
+        for (var i = stops.length; i--;) {
             frame = frames[stops[i]];
             if (is(frame, 'string')) {
                 frame = frames[stops[i]] = {easing: frame};
@@ -201,10 +209,20 @@ $.easing.thingy = buildEasing({
             }
             // Work out "smart" frames
             if (frame.to !== undefined) {
-                // TODO: This needs to be moved to a loop after sorting the stops,
-                //       so that prevFrame can be used to get the last `to` value
-                var from = percentToNum(frame.from, true),
-                    to   = percentToNum(frame.to, true);
+                var to = frame.to = percentToNum(frame.to, true),
+                    from;
+                if (frame.from) {
+                    from = percentToNum(frame.from, true);
+                } else if (prevFrame) {
+                    from = prevFrame.to !== undefined
+                        ? prevFrame.to
+                        : prevFrame.reverse
+                            ? prevFrame.adjust
+                            : prevFrame.scale + prevFrame.adjust;
+                } else {
+                    from = 0;
+                }
+                frame.from = from;
                 frame.scale = Math.max(from, to) - Math.min(from, to);
                 frame.adjust = Math.min(from, to);
                 frame.reverse = from > to;
@@ -214,34 +232,15 @@ $.easing.thingy = buildEasing({
             }
             prevFrame = frame;
         }
-        // Make sure there's a 100% keyframe
-        //   TODO: Can this be handled in the loop above? Move it after smart frames are finished
-        if (stops[0] != 1) {
-            prevFrame = frames[stops[0]];
-            var prevFinish = prevFrame.reverse
-                    ? prevFrame.adjust
-                    : prevFrame.scale + prevFrame.adjust,
-                endScale = 1 - prevFinish;
-            frames[1] = {
-                easing:  $e.linear,
-                scale:   endScale,
-                adjust:  prevFinish
-            };
-            stops.unshift(1);
-        }
         // Add in a no-op stop to speed up calculations in the customEasing function
         if (stops[stops.length - 1] != 0) {
             stops.push(0);
         }
         
-//        var prevStop = 0;
         return function customEasing(t) {
             var curStop,
                 prevStop,
                 i = stops.length - 1;
-//            while ((curStop = stops[--i]) < t) {
-//                prevStop = stops.pop();
-//            }
             while ((curStop = stops[--i]) < t);
             prevStop = stops[i + 1];
             var frame = frames[curStop],
@@ -267,7 +266,7 @@ $.easing.thingy = buildEasing({
     }
     
     function getEasing(easing) {
-        return typeof easing == 'function' ? easing : $e[easing];
+        return typeof easing == 'function' ? easing : easing ? $e[easing] : $e.linear;
     }
     
     var rPercent = /^(\S+)%$/
@@ -326,44 +325,4 @@ $.easing.thingy = buildEasing({
         }
         return buildEasing(frames);
     }
-    
-    // TEMP!
-    function buildUpSteps(easing, steps) {
-        if (!(steps % 2)) {
-            steps++;
-        }
-        var halfSteps = steps / 2
-        return function (t) {
-            var curStep = ~~(t * steps),
-                stepDiff = curStep / steps,
-                newPerc = (t - stepDiff) * steps,
-                divide1 = curStep % 2 ? halfSteps - .5 : halfSteps + .5,
-                divide2 = curStep % 2 ? halfSteps - (curStep / 2) : curStep / 2,
-                newEasing;
-            newEasing = easing(newPerc) * divide1 / steps + divide2 / steps;
-            if (curStep % 2) {
-                newEasing = 1 - newEasing;
-            }
-            return newEasing;
-        }
-    }
-
-    function buildUpLinear(easing, steps) {
-        if (!(steps % 2)) {
-            steps++;
-        }
-        return function (t) {
-            var curStep = ~~(t * steps),
-                stepDiff = curStep / steps,
-                newPerc = (t - stepDiff) * steps,
-                newEasing;
-            newEasing = easing(newPerc);
-            if (curStep % 2) {
-                newEasing = 1 - newEasing;
-            }
-            newEasing = newEasing * .5 + t / 2
-            return newEasing;
-        }
-    }
-
 })(jQuery);

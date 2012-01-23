@@ -19,6 +19,9 @@ $(function () {
             // Re-usability of returned easing function (graph will call it twice)
           , build('easeOutCirc', 4)
             
+            // Empty easing, defaults to linear
+          , build('')
+            
             // Keyframe object
           , build({
                 // Most basic keyframe
@@ -78,6 +81,7 @@ $(function () {
           , build({
                 easing: $e.easeInSine
               , .33: {
+                    // No `easing`, should default to keyframes.easing
                     // No `from`, should default to 0
                     to: '90%'
                 }
@@ -87,9 +91,34 @@ $(function () {
                   , easing: 'linear'
                 }
               , 100: {
+                    // No `easing`, should default to keyframes.easing
                     from: .3
                   , to: 1
                   , reflect: true
+                }
+            })
+            
+            // Mix normal frames with smart frames
+          , build({
+                25: {
+                    easing: 'easeInCirc'
+                  , scale: '25%'
+                }
+              , 50: {
+                    easing: $e.easeOutCirc
+                  , to: .5
+                  , reflect: true
+                }
+              , '75%': {
+                    easing: $e.easeInCirc
+                  , scale: .25
+                  , adjust: .25
+                  , reverse: true
+                }
+              , 1: {
+                    easing: 'easeOutCirc'
+                  , to: 1
+                  , reverse: true // Shouldn't do anything when `to` is present
                 }
             })
         ]
