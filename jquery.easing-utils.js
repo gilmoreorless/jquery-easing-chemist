@@ -169,39 +169,17 @@ $.easing.thingy = buildEasing({
         var stops = [],
             frames = {},
             defaultEasing,
-            frame,
-            prevFrame;
+            frame, prevFrame;
         if (keyframes.easing) {
             defaultEasing = getEasing(keyframes.easing);
         }
-        // Normalise the frames
-        var perc, newPerc, newFrame;
+        // Get frame stop points and sort them, as we can't guarantee
+        // the order of keys in a plain object
+        var perc, newPerc;
         for (perc in keyframes) if (keyframes.hasOwnProperty(perc)) {
             newPerc = percentToNum(perc, false, true);
+            frames[newPerc] = keyframes[perc];
             stops.push(newPerc);
-            frame = keyframes[perc];
-            if (is(frame, 'string')) {
-                frame = {easing: frame};
-            }
-            newFrame = frames[newPerc] = $.extend({}, frame, {
-                easing: frame.easing ? getEasing(frame.easing) : defaultEasing
-            });
-            if (newFrame.reflect) {
-                newFrame.easing = utils.reflect(newFrame.easing);
-            }
-            // Work out "smart" frames
-            if (newFrame.to !== undefined) {
-                // TODO: This needs to be moved to a loop after sorting the stops,
-                //       so that prevFrame can be used to get the last `to` value
-                var from = percentToNum(newFrame.from, true),
-                    to   = percentToNum(newFrame.to, true);
-                newFrame.scale = Math.max(from, to) - Math.min(from, to);
-                newFrame.adjust = Math.min(from, to);
-                newFrame.reverse = from > to;
-            } else {
-                newFrame.scale  = percentToNum(newFrame.scale || 1, true);
-                newFrame.adjust = percentToNum(newFrame.adjust || 0, true);
-            }
         }
         // Optimise an empty state
         if (!stops.length) {
@@ -211,7 +189,33 @@ $.easing.thingy = buildEasing({
         stops.sort(function (a, b) {
             return a == b ? 0 : a < b ? 1 : -1;
         });
+        // Normalise the frames
+        for (var i = 0, ii = stops.length; i < ii; i++) {
+            frame = frames[stops[i]];
+            if (is(frame, 'string')) {
+                frame = frames[stops[i]] = {easing: frame};
+            }
+            frame.easing = frame.easing ? getEasing(frame.easing) : defaultEasing;
+            if (frame.reflect) {
+                frame.easing = utils.reflect(frame.easing);
+            }
+            // Work out "smart" frames
+            if (frame.to !== undefined) {
+                // TODO: This needs to be moved to a loop after sorting the stops,
+                //       so that prevFrame can be used to get the last `to` value
+                var from = percentToNum(frame.from, true),
+                    to   = percentToNum(frame.to, true);
+                frame.scale = Math.max(from, to) - Math.min(from, to);
+                frame.adjust = Math.min(from, to);
+                frame.reverse = from > to;
+            } else {
+                frame.scale  = percentToNum(frame.scale || 1, true);
+                frame.adjust = percentToNum(frame.adjust || 0, true);
+            }
+            prevFrame = frame;
+        }
         // Make sure there's a 100% keyframe
+        //   TODO: Can this be handled in the loop above? Move it after smart frames are finished
         if (stops[0] != 1) {
             prevFrame = frames[stops[0]];
             var prevFinish = prevFrame.reverse
@@ -282,7 +286,7 @@ $.easing.thingy = buildEasing({
     
     utils.build = function (easing, repeat, scale) {
         // Keyframes, no further processing required
-        if (is(easing, 'object')) {
+        if (is(easing, 'object') && !is(easing, 'function')) {
             return buildEasing(easing);
         }
         if (arguments.length > 2) {

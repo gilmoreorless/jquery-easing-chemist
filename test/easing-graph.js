@@ -76,7 +76,7 @@ Raphael.fn.drawGrid = Raphael.fn.drawGrid || function (x, y, w, h, wv, hv, color
           , colour = this.nextColour()
           , bgAttrs = {
                 stroke: colour
-              , 'stroke-width': 7
+              , 'stroke-width': 5
               , opacity: .4
             }
           , fgAttrs = {
