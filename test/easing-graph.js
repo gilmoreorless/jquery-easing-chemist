@@ -35,6 +35,7 @@ Raphael.fn.drawGrid = Raphael.fn.drawGrid || function (x, y, w, h, wv, hv, color
       , cornerRadius: 5
       , resolution: 300
       , gridSize: 20
+      , lineStyle: 'solid'  // 'solid' or 'points'
       , paper: null
       , hue: null
     }
@@ -122,24 +123,25 @@ Raphael.fn.drawGrid = Raphael.fn.drawGrid || function (x, y, w, h, wv, hv, color
         } else {
             path = ['M', this.options.x0, this.options.y0]
             var steps = this.options.resolution
-          , s = 1
-          , e
+              , s = 1
+              , e
             if (!easingFunc) {
                 return;
             }
             for (; s < steps; s++) {
                 e = easingFunc(s / steps, s, 0, 1, steps); // Extra params to make jQuery happy
-                path = drawPoint(path, this.xyEasingToGrid(s / steps, e));
+                path = this.drawPoint(path, this.xyEasingToGrid(s / steps, e));
             }
-            path = drawPoint(path, this.xyEasingToGrid(1, 1));
+            path = this.drawPoint(path, this.xyEasingToGrid(1, 1));
         }
         this.paths.push(this.paper.path(path).attr(attrs));
         return path;
     }
     
-    function drawPoint(path, point) {
-        path = path.concat('L', point);
-//        path = path.concat('M', point, 'l', [1, 0], [0, 1], [-1, 0], [0, -1], 'z')
+    gproto.drawPoint = function (path, point) {
+        path = this.options.lineStyle == 'points'
+             ? path.concat('M', point, 'l', [1, 0], [0, 1], [-1, 0], [0, -1], 'z')
+             : path.concat('L', point);
         return path;
     }
     

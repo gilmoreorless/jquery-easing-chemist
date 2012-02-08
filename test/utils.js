@@ -130,6 +130,6 @@ $(function () {
             id: id + i,
             'class': 'graph-holder'
         }).appendTo($container);
-        Graph(id + i, tempEasing);
+        Graph(id + i, tempEasing, {lineStyle: 'points'});
     }
 });
