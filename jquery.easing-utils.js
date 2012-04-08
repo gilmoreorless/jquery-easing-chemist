@@ -241,20 +241,17 @@ $.easing.thingy = buildEasing({
             var curStop,
                 prevStop,
                 i = stops.length - 1;
+            // Quick way of finding which frame is needed for given time value
             while ((curStop = stops[--i]) < t);
             prevStop = stops[i + 1];
             var frame = frames[curStop],
+                // Percentage gap between this frame and previous frame
                 step = curStop - prevStop,
-                newT = (1 / step) * (t - prevStop);
-            /**
-             * Properties:
-             * -(step)   f(t*sh)
-             * -reverse  1-f(t)
-             * -reflect  utils.reflect(f) [handled by buildEasing()]
-             * -scale    f(t)*sv
-             * -adjust   f(t)+av
-             */
-            var e = frame.easing(newT);
+                // New time value based on percentage of current frame elapsed
+                newT = (1 / step) * (t - prevStop),
+                // Easing based on new value of time
+                e = frame.easing(newT);
+            // Manipulate easing output based on frame parameters
             if (frame.reverse) {
                 e = 1 - e;
             }
@@ -269,7 +266,7 @@ $.easing.thingy = buildEasing({
         return typeof easing == 'function' ? easing : easing ? $e[easing] : $e.linear;
     }
     
-    var rPercent = /^(\S+)%$/
+    var rPercent = /^(\S+)%$/;
     function percentToNum(num, unbounded, normalise) {
         if (is(num, 'string')) {
             var match = num.match(rPercent);
@@ -290,7 +287,8 @@ $.easing.thingy = buildEasing({
         }
         if (arguments.length > 2) {
             scale = percentToNum(scale);
-        } else if (arguments.length > 1) {
+        }
+        if (arguments.length > 1) {
             repeat = Math.max(1, +repeat);
         } else {
             // Only an easing name or function passed in, so just return the function
