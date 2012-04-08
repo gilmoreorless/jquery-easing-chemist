@@ -1,7 +1,9 @@
 /*!
- * TESTING ONLY - USE OF UNSTABLE CODE IN PRODUCTION CAN RESULT IN INJURY OR DEATH
+ * jQuery Easing Utils plugin v1.0.0
+ * https://github.com/gilmoreorless/jquery-easing-molecules/
+ * Open source under the MIT licence: http://gilmoreorless.mit-license.org/2011/
+ * Original equations by Robert Penner under the BSD licence: http://robertpenner.com/easing_terms_of_use.html
  */
-
 ;(function ($, undefined) {
     var $e = $.easing,
         utils = $.easingUtils = {},
