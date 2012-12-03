@@ -1,5 +1,5 @@
 /*!
- * jQuery Easing Utils plugin v1.0.0
+ * jQuery Easing Chemist plugin v1.0.0 - Full builder version
  * https://github.com/gilmoreorless/jquery-easing-molecules/
  * Open source under the MIT licence: http://gilmoreorless.mit-license.org/2011/
  * Original equations by Robert Penner under the BSD licence: http://robertpenner.com/easing_terms_of_use.html
@@ -9,21 +9,21 @@
         utils = $.easingUtils = {},
         tmpl = utils.templates = {},
         ease = 'ease';
-    
+
     //// Setup
-    
+
     utils.reverse = function (func) {
         return function (t) {
             return 1 - func(1 - t);
         }
     }
-    
+
     utils.reflect = function (func) {
         return function (t) {
             return .5 * (t < .5 ? func(2 * t) : (2 - func(2 - 2 * t)));
         }
     }
-    
+
     utils.triple = function (name, easeInFunc, inOutTweak) {
         var basicFunc = inOutTweak ? easeInFunc() : easeInFunc,
             inOutFunc = inOutTweak ? easeInFunc(inOutTweak) : easeInFunc;
@@ -31,33 +31,33 @@
         $e[ease + 'Out' + name] = utils.reverse(basicFunc);
         $e[ease + 'InOut' + name] = utils.reflect(inOutFunc);
     }
-    
-    
+
+
     //// Easing functions
-    
+
     tmpl.kapow = function (n) {
         return function (t) {
             return Math.pow(t, n);
         }
     }
-    
+
     utils.triple('Quad',  tmpl.kapow(2));
     utils.triple('Cubic', tmpl.kapow(3));
     utils.triple('Quart', tmpl.kapow(4));
     utils.triple('Quint', tmpl.kapow(5));
-    
+
     utils.triple('Sine', function (t) {
         return 1 - Math.cos(t * Math.PI / 2);
     });
-    
+
     utils.triple('Expo', function (t) {
         return Math.pow(2, 10 * (t - 1));
     });
-    
+
     utils.triple('Circ', function (t) {
         return 1 - Math.sqrt(1 - t * t);
     });
-    
+
     tmpl.back = function (s) {
         if (s === undefined) s = 1.70158; // Penner's magic number #1
         return function (t) {
@@ -66,7 +66,7 @@
     }
     // easeInOutBack has a more exaggerated snap-back
     utils.triple('Back', tmpl.back, 1.70158 * 1.525);
-    
+
     utils.triple('Bounce', function (t) {
         var d = 2.75,
             m = 7.5625, // Penner's magic number #2
@@ -80,7 +80,7 @@
                     m * --t * t;
         return 1 - e;
     });
-    
+
     tmpl.elastic = function (p) {
         if (p === undefined) p = .3;
         return function (t) {
@@ -92,15 +92,15 @@
     }
     // easeInOutElastic has a different modifier so it's not as exaggerated
     utils.triple('Elastic', tmpl.elastic, .45);
-    
+
     // Convert jQuery's inbuilt easing functions to work with the new system
     $e.linear = function (t) {
         return t;
     }
     $e.swing = $e.easeInOutSine;
-    
+
     //// Custom builds
-    
+
 /*
 Possible API for building up:
 
@@ -141,7 +141,7 @@ $.easing.thingy = buildEasing({
         from: positionPercentage,
         to: positionPercentage
     }
-    
+
     // if 100% isn't defined, linear easing is done from the previous keyframe
 });
 */
@@ -166,7 +166,7 @@ $.easing.thingy = buildEasing({
                     objectToString.call(o).slice(8, -1).toLowerCase() == type;
         };
     })();
-    
+
     function buildEasing(keyframes) {
         var stops = [],
             frames = {},
@@ -238,7 +238,7 @@ $.easing.thingy = buildEasing({
         if (stops[stops.length - 1] != 0) {
             stops.push(0);
         }
-        
+
         return function customEasing(t) {
             var curStop,
                 prevStop,
@@ -259,15 +259,15 @@ $.easing.thingy = buildEasing({
             }
             e *= frame.scale || 1;
             e += frame.adjust || 0;
-            
+
             return e;
         }
     }
-    
+
     function getEasing(easing) {
         return typeof easing == 'function' ? easing : easing ? $e[easing] : $e.linear;
     }
-    
+
     var rPercent = /^(\S+)%$/;
     function percentToNum(num, unbounded, normalise) {
         if (is(num, 'string')) {
@@ -281,7 +281,7 @@ $.easing.thingy = buildEasing({
         }
         return unbounded ? +num : Math.min(1, Math.max(0, +num));
     }
-    
+
     utils.build = function (easing, repeat, scale) {
         // Keyframes, no further processing required
         if (is(easing, 'object') && !is(easing, 'function')) {

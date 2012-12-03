@@ -1,4 +1,4 @@
-# jQuery Easing Molecules
+# jQuery Easing Chemist
 
 A rebuild of the common [jQuery Easing plugin](http://gsgd.co.uk/sandbox/jquery/easing/) using simpler code and the building block style used by MooTools and D3.
 
