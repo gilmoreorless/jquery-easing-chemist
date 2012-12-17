@@ -1,3 +1,5 @@
+/*jshint laxcomma: true */
+
 Raphael.fn.drawGrid = Raphael.fn.drawGrid || function (x, y, w, h, wv, hv, color) {
     color = color || "#000";
     var path = ["M", x, y, "L", x + w, y, x + w, y + h, x, y + h, x, y],
@@ -13,7 +15,7 @@ Raphael.fn.drawGrid = Raphael.fn.drawGrid || function (x, y, w, h, wv, hv, color
 };
 
 (function (window, $) {
-    
+
     window.Graph = function Graph(id, easings, options) {
         if (!(this instanceof Graph)) {
             return new Graph(id, easings, options);
@@ -23,7 +25,7 @@ Raphael.fn.drawGrid = Raphael.fn.drawGrid || function (x, y, w, h, wv, hv, color
         this.init(options);
         this.render();
     }
-    
+
     var gproto = Graph.prototype;
     gproto.defaults = {
         width: 400
@@ -39,7 +41,7 @@ Raphael.fn.drawGrid = Raphael.fn.drawGrid || function (x, y, w, h, wv, hv, color
       , paper: null
       , hue: null
     }
-    
+
     gproto.init = function (options) {
         this.setOptions(options);
         var opts = this.options
@@ -64,7 +66,7 @@ Raphael.fn.drawGrid = Raphael.fn.drawGrid || function (x, y, w, h, wv, hv, color
         this.paths = this.paper.set();
         this.hue = this.options.hue || ~~(Math.random() * 360);
     }
-    
+
     gproto.setOptions = function (options) {
         var opts = this.options = $.extend({}, this.defaults, options || {});
         opts.outerWidth  = opts.width  + opts.paddingLeft * 2;
@@ -74,26 +76,26 @@ Raphael.fn.drawGrid = Raphael.fn.drawGrid || function (x, y, w, h, wv, hv, color
         opts.y1 = opts.offsetTop + opts.paddingTop;
         opts.y0 = opts.y1 + opts.height;
     }
-    
+
     gproto.nextColour = function () {
         var colour = 'hsl(' + [this.hue, 50, 50] + ')';
         this.hue = (this.hue + 43) % 360;
         return colour;
     }
-    
+
     gproto.render = function () {
         var i = this.easings.length;
         while (i--) {
             this.drawEasing(this.easings[i]);
         }
     }
-    
+
     gproto.clear = function () {
         this.paths.forEach(function (elem) {
             elem.remove();
         }).clear();
     }
-    
+
     gproto.drawEasing = function (easingFunc, colour) {
         if (!Raphael.is(easingFunc, 'array')) {
             easingFunc = [easingFunc];
@@ -115,7 +117,7 @@ Raphael.fn.drawGrid = Raphael.fn.drawGrid || function (x, y, w, h, wv, hv, color
           , fgData = easingFg === easingBg ? bgPath : easingFg
         this.drawEasingLine(fgData, fgAttrs);
     }
-    
+
     gproto.drawEasingLine = function (easingFunc, attrs) {
         var path
         if (Raphael.is(easingFunc, 'array') && easingFunc[0] == 'M') {
@@ -137,14 +139,14 @@ Raphael.fn.drawGrid = Raphael.fn.drawGrid || function (x, y, w, h, wv, hv, color
         this.paths.push(this.paper.path(path).attr(attrs));
         return path;
     }
-    
+
     gproto.drawPoint = function (path, point) {
         path = this.options.lineStyle == 'points'
              ? path.concat('M', point, 'l', [1, 0], [0, 1], [-1, 0], [0, -1], 'z')
              : path.concat('L', point);
         return path;
     }
-    
+
     gproto.xyEasingToGrid = function (x, y) {
         var opts = this.options
           , xy = arguments.length > 1 ? [x, y] : x
@@ -153,7 +155,7 @@ Raphael.fn.drawGrid = Raphael.fn.drawGrid || function (x, y, w, h, wv, hv, color
           , (1 - xy[1]) * opts.height + opts.y1
         ]
     }
-    
+
     gproto.xyGridToEasing = function (x, y) {
         var opts = this.options
           , xy = arguments.length > 1 ? [x, y] : x
@@ -162,5 +164,5 @@ Raphael.fn.drawGrid = Raphael.fn.drawGrid || function (x, y, w, h, wv, hv, color
           , 1 - ((xy[1] - opts.y1) / opts.height)
         ]
     }
-    
+
 })(this, jQuery);

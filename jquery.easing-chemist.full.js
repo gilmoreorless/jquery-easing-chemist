@@ -1,6 +1,6 @@
 /*!
  * jQuery Easing Chemist plugin v1.0.0 - Full builder version
- * https://github.com/gilmoreorless/jquery-easing-molecules/
+ * https://github.com/gilmoreorless/jquery-easing-chemist/
  * Open source under the MIT licence: http://gilmoreorless.mit-license.org/2011/
  * Original equations by Robert Penner under the BSD licence: http://robertpenner.com/easing_terms_of_use.html
  */
@@ -175,7 +175,7 @@ $.easing.thingy = buildEasing({
         if (keyframes.easing) {
             defaultEasing = getEasing(keyframes.easing);
         }
-        // Get frame stop points and sort them, as we can't guarantee
+        // Get frame stop points for sorting, as we can't guarantee
         // the order of keys in a plain object
         var perc, newPerc;
         for (perc in keyframes) if (keyframes.hasOwnProperty(perc) && perc != 'easing') {

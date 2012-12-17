@@ -13,7 +13,7 @@
         <div id="container"></div>
 
         <script src="jquery-1.6.2.js"></script>
-        <script src="../jquery.easing-orig.js"></script>
+        <script src="../compare/jquery.easing-orig.js"></script>
         <script>
             $.each($.easing, function (name, func) {
                 $.easing[name + 'Orig'] = func;
@@ -28,7 +28,7 @@
                 return $.easing.easeOutBounceOrig (x, t*2-d, 0, c, d) * .5 + c*.5 + b;
             }
         </script>
-        <script src="../jquery.easing-molecules.js"></script>
+        <script src="../jquery.easing-chemist.js"></script>
         <script src="raphael-min.js"></script>
         <script src="easing-graph.js"></script>
         <script src="calibrate.js"></script>
